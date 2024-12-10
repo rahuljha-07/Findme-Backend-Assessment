@@ -1,8 +1,8 @@
 from flask import Flask, send_from_directory
 from flasgger import Swagger
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import os
+
+from .routes import blueprint
 
 def initialize_app():
     """
@@ -19,11 +19,6 @@ def initialize_app():
     }
     Swagger(app)  # Initialize Swagger
 
-    # Configure Flask-Limiter for rate limiting
-    limiter = Limiter(get_remote_address, app=app)
-
-    # Register blueprints for modular route handling
-    from .routes import blueprint
     app.register_blueprint(blueprint, url_prefix='/api')
 
     # Route to serve the index.html at root URL

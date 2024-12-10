@@ -7,14 +7,10 @@ from app.services import (
     delete_product
 )
 from app.utils import generate_error_response, validate_required_fields
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 blueprint = Blueprint('api', __name__)
-limiter = Limiter(get_remote_address, app=blueprint)
 
 @blueprint.route('/products', methods=['GET'])
-@limiter.limit("100 per minute")  # Limit to 100 requests per minute
 def list_all_items():
     """
     Fetch all items from the products.
@@ -50,7 +46,6 @@ def list_all_items():
     return jsonify(all_items), 200
 
 @blueprint.route('/products/<int:item_id>', methods=['GET'])
-@limiter.limit("50 per minute")  # Limit to 50 requests per minute
 def get_single_item(item_id):
     """
     Fetch a single item by its ID.
@@ -94,7 +89,6 @@ def get_single_item(item_id):
     return generate_error_response("Item not found", 404)
 
 @blueprint.route('/products', methods=['POST'])
-@limiter.limit("30 per minute")  # Limit to 30 POST requests per minute
 def create_new_item():
     """
     Add a new item to the inventory.
@@ -159,7 +153,6 @@ def create_new_item():
     return jsonify(new_item), 201
 
 @blueprint.route('/products/<int:item_id>', methods=['PUT'])
-@limiter.limit("20 per minute")  # Limit to 20 PUT requests per minute
 def update_item(item_id):
     """
     Update an existing item in the inventory.
@@ -227,7 +220,6 @@ def update_item(item_id):
     return generate_error_response("Item not found", 404)
 
 @blueprint.route('/products/<int:item_id>', methods=['DELETE'])
-@limiter.limit("10 per minute")  # Limit to 10 DELETE requests per minute
 def delete_item(item_id):
     """
     Delete an item from the inventory by its ID.
