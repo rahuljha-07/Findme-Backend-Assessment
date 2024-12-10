@@ -1,5 +1,7 @@
 from flask import Flask, send_from_directory
 from flasgger import Swagger
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import os
 
 def initialize_app():
@@ -10,13 +12,15 @@ def initialize_app():
     static_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'static')
     app = Flask(__name__, static_folder=static_folder_path)
 
-
     # Configure Swagger for API documentation
     app.config['SWAGGER'] = {
         'title': 'Product Management API',
         'uiversion': 3
     }
     Swagger(app)  # Initialize Swagger
+
+    # Configure Flask-Limiter for rate limiting
+    limiter = Limiter(get_remote_address, app=app)
 
     # Register blueprints for modular route handling
     from .routes import blueprint
