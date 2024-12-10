@@ -101,8 +101,6 @@ def create_new_item():
           schema:
             type: object
             properties:
-              id:
-                type: integer
               name:
                 type: string
               price:
@@ -145,10 +143,12 @@ def create_new_item():
         description: Invalid data
     """
     item_details = request.json
-    required_keys = ["id", "name", "price", "quantity", "description", "category", "date_added", "image_url"]
+
+    required_keys = ["name", "price", "quantity", "description", "category", "date_added", "image_url"]
     is_valid, error_message = validate_required_fields(item_details, required_keys)
     if not is_valid:
         return generate_error_response(error_message, 400)
+
 
     new_item = add_product(item_details)
     return jsonify(new_item), 201

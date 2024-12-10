@@ -1,4 +1,5 @@
 const apiEndpoint = '/api/products';
+let allProducts = []; // Store all products for filtering
 
 // Fetch and display products
 async function fetchProducts() {
@@ -7,31 +8,45 @@ async function fetchProducts() {
         if (!response.ok) {
             throw new Error('Failed to fetch products.');
         }
-        const products = await response.json();
-
-        const productGrid = document.getElementById('product-grid');
-        productGrid.innerHTML = ''; // Clear previous content
-
-        products.forEach(product => {
-            const tile = document.createElement('div');
-            tile.className = 'product-tile';
-            tile.innerHTML = `
-                <img src="${product.image_url}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p><strong>Price:</strong> $${product.price}</p>
-                <p><strong>Quantity:</strong> ${product.quantity}</p>
-                <p><strong>Description:</strong> ${product.description}</p>
-                <p><strong>Category:</strong> ${product.category}</p>
-                <p><strong>Date Added:</strong> ${product.date_added}</p>
-                <button onclick="editProduct(${product.id})">Edit</button>
-                <button onclick="deleteProduct(${product.id})">Delete</button>
-            `;
-            productGrid.appendChild(tile);
-        });
+        allProducts = await response.json(); // Store fetched products in a global variable
+        displayProducts(allProducts); // Display all products initially
     } catch (error) {
         console.error('Error fetching products:', error);
     }
 }
+
+// Display products in the grid
+function displayProducts(products) {
+    const productGrid = document.getElementById('product-grid');
+    productGrid.innerHTML = ''; // Clear previous content
+
+    products.forEach(product => {
+        const tile = document.createElement('div');
+        tile.className = 'product-tile';
+        tile.innerHTML = `
+            <img src="${product.image_url}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p><strong>Price:</strong> $${product.price}</p>
+            <p><strong>Quantity:</strong> ${product.quantity}</p>
+            <p><strong>Description:</strong> ${product.description}</p>
+            <p><strong>Category:</strong> ${product.category}</p>
+            <p><strong>Date Added:</strong> ${product.date_added}</p>
+            <button onclick="editProduct(${product.id})">Edit</button>
+            <button onclick="deleteProduct(${product.id})">Delete</button>
+        `;
+        productGrid.appendChild(tile);
+    });
+}
+
+// Search functionality
+document.getElementById('search-input').addEventListener('input', (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredProducts = allProducts.filter(product =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm)
+    );
+    displayProducts(filteredProducts); // Display filtered products
+});
 
 // Open Modal for Add Product
 document.getElementById('add-product-button').addEventListener('click', () => {

@@ -29,7 +29,7 @@ def find_product_by_id(item_id):
 
 def add_product(new_product):
     """
-    Add a new product.
+    Add a new product with an auto-assigned ID.
 
     Args:
         new_product (dict): A dictionary containing the product details.
@@ -37,8 +37,14 @@ def add_product(new_product):
     Returns:
         dict: The newly added product.
     """
+    # Auto-assign the id based on the last id in the products list
+    existing_ids = [product["id"] for product in products]
+    new_id = max(existing_ids) + 1 if existing_ids else 1
+    new_product["id"] = new_id  # Assign the new id to the product
+
     products.append(new_product) # Appending the new product to the list.
     return new_product
+
 
 def update_product(item_id, updated_data):
     """
